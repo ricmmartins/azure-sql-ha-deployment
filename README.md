@@ -14,3 +14,62 @@ keywords: azure sql server, high availability, always on availability groups, az
 A production-ready automated deployment solution for SQL Server high availability infrastructure on Azure, designed for Always On Availability Groups configuration.
 
 ## 🎯 Overview
+
+This solution provides a **one-click deployment** script that creates a complete SQL Server high availability infrastructure on Azure. The script automates the creation of all necessary Azure resources while following Microsoft best practices for security, networking, and high availability.
+
+### 🚀 What Gets Deployed
+
+- **2x SQL Server 2019 VMs** in an Availability Set
+- **Azure Load Balancer** (Standard SKU) pre-configured for AG Listener
+- **Virtual Network** with custom subnet and NSG rules
+- **Azure Key Vault** for secure credential management
+- **Managed Identities** for enhanced security
+- **Premium SSD storage** optimized for SQL Server workloads
+
+### ⏱️ Deployment Time
+
+- **Infrastructure**: ~15-20 minutes
+- **Post-configuration**: ~30-45 minutes (manual)
+
+## 📋 Table of Contents
+
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [Architecture](#-architecture)
+- [Features](#-features)
+- [Deployment Guide](#-deployment-guide)
+- [Post-Deployment Configuration](#-post-deployment-configuration)
+- [Security](#-security)
+- [Cost Analysis](#-cost-analysis)
+- [Troubleshooting](#-troubleshooting)
+- [Best Practices](#-best-practices)
+- [FAQ](#-faq)
+- [Contributing](#-contributing)
+
+## 📌 Prerequisites
+
+### Required Tools
+| Tool | Minimum Version | Installation Guide |
+|------|----------------|-------------------|
+| Azure CLI | 2.40.0+ | [Install Guide](https://docs.microsoft.com/cli/azure/install-azure-cli) |
+| Bash | 4.0+ | Included in Linux/macOS, [WSL for Windows](https://docs.microsoft.com/windows/wsl/install) |
+| curl | Any | Usually pre-installed |
+
+### Azure Requirements
+- ✅ Active Azure Subscription
+- ✅ Contributor or Owner role on subscription
+- ✅ Available quota for:
+  - 2x Standard_D2s_v3 VMs
+  - 1x Standard Load Balancer
+  - 6x Premium SSD disks
+
+### Quick Prerequisites Check
+```bash
+# Check Azure CLI
+az --version
+
+# Check Azure login
+az account show
+
+# Check available VM quota
+az vm list-usage --location centralus --query "[?name.value=='standardDSv3Family'].{Name:name.value, Current:currentValue, Limit:limit}" -o table
