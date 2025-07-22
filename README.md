@@ -57,7 +57,7 @@ keywords: azure sql server, high availability, always on availability groups, az
 
 This solution provides a **one-click deployment** script that creates a complete SQL Server high availability infrastructure on Azure, following Microsoft best practices for security, networking, and high availability.
 
-### 🚀 What Gets Deployed {#what-gets-deployed}
+### What Gets Deployed 
 
 - 2× SQL Server 2019 VMs in an Availability Set
 - Azure Standard Load Balancer preconfigured for the AG Listener
@@ -66,16 +66,16 @@ This solution provides a **one-click deployment** script that creates a complete
 - Managed Identities for enhanced security
 - Premium SSD storage optimized for SQL Server workloads
 
-### ⏱️ Deployment Time {#deployment-time}
+### Deployment Time
 
 - **Infrastructure:** ~15–20 minutes
 - **Post-configuration:** ~30–45 minutes (manual)
 
 ---
 
-## 📌 Prerequisites {#prerequisites}
+## Prerequisites
 
-### Required Tools {#required-tools}
+### Required Tools
 
 | Tool       | Minimum Version | Installation Guide                                                                 |
 |------------|------------------|-------------------------------------------------------------------------------------|
