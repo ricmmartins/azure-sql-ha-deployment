@@ -4,8 +4,6 @@ keywords: azure sql server, high availability, always on availability groups, az
 
 # Azure SQL Server High Availability Infrastructure Deployment
 
-# Azure SQL Server High Availability Infrastructure Deployment
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Azure](https://img.shields.io/badge/Azure-Ready-blue?logo=microsoft-azure)](https://azure.microsoft.com)
 [![SQL Server 2019](https://img.shields.io/badge/SQL%20Server-2019-red?logo=microsoft-sql-server)](https://www.microsoft.com/sql-server/sql-server-2019)
