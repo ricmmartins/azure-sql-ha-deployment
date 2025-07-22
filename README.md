@@ -93,12 +93,12 @@ chmod +x deploy-sql-vms-simple.sh
 
 The script will:
 
-✅ Generate unique resource names with timestamp
-✅ Create all Azure resources
-✅ Configure networking and security
-✅ Store credentials securely in Key Vault
-✅ Output connection information
-✅ Save deployment details to a file
+- ✅ Generate unique resource names with timestamp
+- ✅ Create all Azure resources
+- ✅ Configure networking and security
+- ✅ Store credentials securely in Key Vault
+- ✅ Output connection information
+- ✅ Save deployment details to a file
 
 ## Architecture
 
