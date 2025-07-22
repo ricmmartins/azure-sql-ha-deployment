@@ -429,7 +429,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). PR steps:
 
 ---
 
-## 📄 License {#license}
+## 📄 License
 
 MIT License – see [LICENSE](./LICENSE).
 
