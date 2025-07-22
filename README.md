@@ -54,11 +54,11 @@ keywords: azure sql server, high availability, always on availability groups, az
 
 ---
 
-## 🎯 Overview {#overview}
+## Overview
 
 This solution provides a **one-click deployment** script that creates a complete SQL Server high availability infrastructure on Azure, following Microsoft best practices for security, networking, and high availability.
 
-### 🚀 What Gets Deployed {#what-gets-deployed}
+### What Gets Deployed 
 
 - 2× SQL Server 2019 VMs in an Availability Set  
 - Azure Standard Load Balancer preconfigured for the AG Listener  
@@ -67,16 +67,16 @@ This solution provides a **one-click deployment** script that creates a complete
 - Managed Identities for enhanced security  
 - Premium SSD storage optimized for SQL Server workloads
 
-### ⏱️ Deployment Time {#deployment-time}
+###  Deployment Time 
 
 - **Infrastructure:** ~15–20 minutes  
 - **Post-configuration:** ~30–45 minutes (manual)
 
 ---
 
-## 📌 Prerequisites {#prerequisites}
+## Prerequisites 
 
-### Required Tools {#required-tools}
+### Required Tools 
 
 | Tool      | Minimum Version | Installation Guide |
 |-----------|------------------|--------------------|
@@ -84,7 +84,7 @@ This solution provides a **one-click deployment** script that creates a complete
 | Bash      | 4.0+             | Included in Linux/macOS, or use [WSL on Windows](https://learn.microsoft.com/windows/wsl/install) |
 | curl      | Any              | Usually pre-installed |
 
-### Azure Requirements {#azure-requirements}
+### Azure Requirements 
 
 - Active Azure Subscription  
 - Contributor or Owner role on the subscription  
@@ -93,7 +93,7 @@ This solution provides a **one-click deployment** script that creates a complete
   - 1× Standard Load Balancer  
   - 6× Premium SSD disks
 
-### Quick Prerequisites Check {#quick-prerequisites-check}
+### Quick Prerequisites Check 
 
 ```bash
 # Check Azure CLI
@@ -108,7 +108,7 @@ az vm list-usage --location centralus   --query "[?name.value=='standardDSv3Fami
 
 ---
 
-## 🚀 Quick Start {#quick-start}
+##  Quick Start 
 
 1. **Download and run**
 
@@ -143,21 +143,21 @@ The script will:
 
 ---
 
-## 🏗️ Architecture {#architecture}
+## Architecture 
 
-### Network Topology {#network-topology}
+### Network Topology 
 
 ![SQL HA Network Topology diagram showing VNet, subnets, load balancer, and two SQL VMs](images/sql-ha-architecture-resized.png "SQL HA Architecture - Network Topology")
 
-### High Availability Design {#high-availability-design}
+### High Availability Design 
 
 ![High Availability design diagram illustrating AG replicas, listener, and probe port](images/ha-design.png "High Availability Design for SQL Server AG")
 
 ---
 
-## ✨ Features {#features}
+## Features 
 
-### Security Features {#security-features}
+### Security Features 
 
 - Azure Key Vault integration: all credentials stored securely  
 - Managed Identities: no passwords in code or config files  
@@ -165,14 +165,14 @@ The script will:
 - Temporary Public IPs: only for initial configuration, easily removed  
 - Role-based access: VMs have minimal required permissions
 
-### Performance Features {#performance-features}
+### Performance Features
 
 - Premium SSD storage: optimized for SQL Server workloads  
 - Availability Sets: protection against hardware failures  
 - Standard Load Balancer: high performance and reliability  
 - SQL VM Resource Provider: automated patching and backups
 
-### Operational Features {#operational-features}
+### Operational Features 
 
 - Automated deployment: single script execution  
 - Idempotent operations: safe to re-run  
@@ -182,7 +182,7 @@ The script will:
 
 ---
 
-## 📖 Deployment Guide {#deployment-guide}
+## Deployment Guide
 
 ### 1. Pre-Deployment Checklist
 
@@ -227,9 +227,9 @@ az keyvault secret show --vault-name <YOUR-KEYVAULT> --name sql-admin-password -
 
 ---
 
-## 🔧 Post-Deployment Configuration {#post-deployment-configuration}
+## Post-Deployment Configuration
 
-### Phase 1: Initial VM Access {#phase-1-initial-vm-access}
+### Phase 1: Initial VM Access 
 
 ```bash
 # Windows
@@ -245,7 +245,7 @@ New-NetFirewallRule -DisplayName "AG Endpoint"    -Direction Inbound -Protocol T
 New-NetFirewallRule -DisplayName "SQL Probe Port" -Direction Inbound -Protocol TCP -LocalPort 59999 -Action Allow
 ```
 
-### Phase 2: Windows Failover Cluster {#phase-2-windows-failover-cluster}
+### Phase 2: Windows Failover Cluster
 
 ```powershell
 Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools
@@ -258,7 +258,7 @@ New-Cluster -Name SQLCLUSTER -Node sqlvm1,sqlvm2 -NoStorage
 (Get-Cluster).SameSubnetThreshold = 15
 ```
 
-### Phase 3: SQL Server Always On {#phase-3-sql-server-always-on}
+### Phase 3: SQL Server Always On 
 
 Enable Always On via SQL Server Configuration Manager (GUI) or PowerShell, then:
 
@@ -287,7 +287,7 @@ REPLICA ON
 
 (See **Advanced Troubleshooting** appendix for full secondary join/restore steps.)
 
-### Phase 4: Configure AG Listener {#phase-4-configure-ag-listener}
+### Phase 4: Configure AG Listener 
 
 ```sql
 ALTER AVAILABILITY GROUP [TestAG]
@@ -315,9 +315,9 @@ Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{
 
 ---
 
-## 🔒 Security {#security}
+## Security 
 
-### Security Best Practices Implemented {#security-best-practices-implemented}
+### Security Best Practices Implemented 
 
 | Feature               | Implementation            | Benefit                          |
 |-----------------------|---------------------------|----------------------------------|
@@ -327,7 +327,7 @@ Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{
 | Access Control        | RBAC + Key Vault policies | Principle of least privilege     |
 | Encryption            | TLS for AG endpoints      | Data in transit protection       |
 
-### Post-Deployment Security Hardening {#post-deployment-security-hardening}
+### Post-Deployment Security Hardening 
 
 ```bash
 # Remove Public IPs when done
@@ -344,7 +344,7 @@ Further hardening guidance is in **Appendix – Security Hardening (Advanced)**.
 
 ---
 
-## 💰 Cost Analysis {#cost-analysis}
+## Cost Analysis 
 
 ### Estimated Monthly Costs (Central US) {#estimated-monthly-costs}
 
@@ -357,7 +357,7 @@ Further hardening guidance is in **Appendix – Security Hardening (Advanced)**.
 | Network        | 100 GB egress                            | $9                 |
 | **Total**      |                                          | **~$455/month**    |
 
-### Cost Optimization Strategies {#cost-optimization-strategies}
+### Cost Optimization Strategies 
 
 - B-series VMs for dev/test (save ~40%)  
 - Auto-shutdown schedules (save ~50%)  
@@ -370,9 +370,9 @@ Deep-dive numbers & scripts in **Appendix – Cost, ROI & TCO Analysis**.
 
 ---
 
-## 🔍 Troubleshooting {#troubleshooting}
+## Troubleshooting
 
-### Common Issues and Solutions {#common-issues-and-solutions}
+### Common Issues and Solutions 
 
 **Cluster Creation Fails**
 
@@ -399,7 +399,7 @@ See **Appendix – Advanced Troubleshooting** for full diagnostics and fixes.
 
 ---
 
-## 📚 Best Practices {#best-practices}
+## Best Practices
 
 **Pre-Deployment**: verify quotas, plan IP scheme, document security, prep runbooks.  
 **During Deployment**: monitor activity log, save outputs, test each phase.  
@@ -407,7 +407,7 @@ See **Appendix – Advanced Troubleshooting** for full diagnostics and fixes.
 
 ---
 
-## ❓ FAQ {#faq}
+## FAQ
 
 - **Change region?** Yes—before deployment. Modify `LOCATION`.  
 - **Different VM sizes?** Yes—ensure Premium storage support.  
@@ -417,7 +417,7 @@ See **Appendix – Advanced Troubleshooting** for full diagnostics and fixes.
 
 ---
 
-## 🤝 Contributing {#contributing}
+## Contributing 
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). PR steps:
 
@@ -435,7 +435,7 @@ MIT License – see [LICENSE](./LICENSE).
 
 ---
 
-## Appendices {#appendices}
+## Appendices 
 
 - 🔐 **Security Hardening (Advanced):** [docs/appendix-security-hardening.md](docs/appendix-security-hardening.md)  
 - 💸 **Cost, ROI & TCO Analysis:** [docs/appendix-cost-and-roi.md](docs/appendix-cost-and-roi.md)  
@@ -444,9 +444,5 @@ MIT License – see [LICENSE](./LICENSE).
 - 🆘 **DR Playbooks & Ops Runbooks:** [docs/appendix-dr-and-ops-runbooks.md](docs/appendix-dr-and-ops-runbooks.md)
 
 ---
-
-## 🗒️ Changelog {#changelog}
-
-See [CHANGELOG.md](./CHANGELOG.md).
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
