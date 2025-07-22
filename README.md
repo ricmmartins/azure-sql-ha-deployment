@@ -248,11 +248,138 @@ New-Cluster -Name SQLCLUSTER -Node sqlvm1,sqlvm2 -NoStorage
 
 2. Create AG Endpoints (Both VMs)
 
+```bash
+CREATE ENDPOINT [Hadr_endpoint]
+STATE = STARTED
+AS TCP (LISTENER_PORT = 5022)
+FOR DATA_MIRRORING (
+    ROLE = ALL,
+    ENCRYPTION = REQUIRED ALGORITHM AES
+)
+```
 
+3. Create Availability Group (Primary only)
 
+```bash
+-- Create sample database
+CREATE DATABASE TestDB
+GO
 
+-- Full backup (required for AG)
+BACKUP DATABASE TestDB TO DISK = 'C:\Backup\TestDB.bak'
 
+-- Create AG
+CREATE AVAILABILITY GROUP [TestAG]
+FOR DATABASE [TestDB]
+REPLICA ON 
+    'sqlvm1' WITH (ENDPOINT_URL = 'TCP://sqlvm1:5022',
+        AVAILABILITY_MODE = SYNCHRONOUS_COMMIT,
+        FAILOVER_MODE = AUTOMATIC),
+    'sqlvm2' WITH (ENDPOINT_URL = 'TCP://sqlvm2:5022',
+        AVAILABILITY_MODE = SYNCHRONOUS_COMMIT,
+        FAILOVER_MODE = AUTOMATIC)
+```
 
+### Phase 4: Configure AG Listener
+
+1. Create Listener (Primary)
+
+```bash
+ALTER AVAILABILITY GROUP [TestAG]
+ADD LISTENER 'AGListener' (
+    WITH IP (('10.0.1.100', '255.255.255.0')),
+    PORT=1433
+)
+```
+
+2. Configure Cluster Parameters (PowerShell on any node)
+
+```bash
+$ClusterNetworkName = "Cluster Network 1"
+$IPResourceName = "AGListener_10.0.1.100"
+$ListenerILBIP = "10.0.1.100"
+[int]$ProbePort = 59999
+
+Import-Module FailoverClusters
+Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{
+    "Address"="$ListenerILBIP";
+    "ProbePort"=$ProbePort;
+    "SubnetMask"="255.255.255.255";
+    "Network"="$ClusterNetworkName";
+    "EnableDhcp"=0
+}
+```
+
+## 🔒 Security
+
+Security Best Practices Implemented
+
+| Feature               | Implementation              | Benefit                         |
+|-----------------------|-----------------------------|----------------------------------|
+| Credential Management | Azure Key Vault             | No hardcoded passwords           |
+| Network Security      | Custom NSG rules            | Minimal attack surface           |
+| Identity Management   | Managed Identities          | No credential rotation needed    |
+| Access Control        | RBAC + Key Vault policies   | Principle of least privilege     |
+| Encryption            | TLS for AG endpoints        | Data in transit protection       |
+
+Post-Deployment Security Hardening
+
+1. Remove Public IPs
+
+```bash
+# After configuration is complete
+az network public-ip delete -g [RESOURCE-GROUP] -n sqlvm1-pip --yes
+az network public-ip delete -g [RESOURCE-GROUP] -n sqlvm2-pip --yes
+```
+
+2. Enable Azure Bastion (Recommended)
+
+```bash
+az network bastion create \
+    --name sql-bastion \
+    --public-ip-address sql-bastion-pip \
+    --resource-group [RESOURCE-GROUP] \
+    --vnet-name sql-vnet
+```
+
+3. Configure SQL Server Security
+
+  - Change default SA password
+  - Disable SA account if not needed
+  - Enable SQL Server audit logging
+  - Configure TDE for databases
+
+## 💰 Cost Analysis
+
+Estimated Monthly Costs (Central US Region)
+
+| Resource      | Specification                                   | Est. Monthly Cost |
+|---------------|--------------------------------------------------|-------------------:|
+| 2x SQL VMs    | Standard_D2s_v3 (2 vCPU, 8GB RAM)                | $280               |
+| Storage       | 2x OS (128GB) + 4x Data (128GB + 256GB each)     | $140               |
+| Load Balancer | Standard SKU                                     | $25                |
+| Key Vault     | Standard tier, minimal transactions              | <$1                |
+| Network       | Bandwidth (est. 100GB/month)                     | $9                 |
+| **Total**     |                                                  | **~$455/month**    |
+
+Cost Optimization Strategies
+
+1. Development/Test Environments
+    - Use B-series VMs: Save ~40%
+    - Schedule auto-shutdown: Save ~50%
+    - Use Dev/Test subscription: Save ~55%
+
+2. Production Environments
+
+    - Reserved Instances (1-year): Save ~40%
+    - Reserved Instances (3-year): Save ~60%
+    - Azure Hybrid Benefit: Save ~40%
+
+3. Storage Optimization
+
+    - Use Standard SSD for non-critical workloads
+    - Implement data compression
+    - Archive old backups to Cool storage
 
 
 
