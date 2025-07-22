@@ -391,11 +391,11 @@ MIT License – see [LICENSE](./LICENSE).
 
 ## Appendices 
 
-- 🔐 **Security Hardening (Advanced):** [docs/appendix-security-hardening.md](docs/appendix-security-hardening.md)  
-- 💸 **Cost, ROI & TCO Analysis:** [docs/appendix-cost-and-roi.md](docs/appendix-cost-and-roi.md)  
-- 📈 **Monitoring & Alerting (KQL/PowerShell):** [docs/appendix-monitoring-and-alerting.md](docs/appendix-monitoring-and-alerting.md)  
-- 🛠️ **Advanced Troubleshooting:** [docs/appendix-troubleshooting-advanced.md](docs/appendix-troubleshooting-advanced.md)  
-- 🆘 **DR Playbooks & Ops Runbooks:** [docs/appendix-dr-and-ops-runbooks.md](docs/appendix-dr-and-ops-runbooks.md)
+- **Security Hardening (Advanced):** [docs/appendix-security-hardening.md](docs/appendix-security-hardening.md)  
+- **Cost, ROI & TCO Analysis:** [docs/appendix-cost-and-roi.md](docs/appendix-cost-and-roi.md)  
+- **Monitoring & Alerting (KQL/PowerShell):** [docs/appendix-monitoring-and-alerting.md](docs/appendix-monitoring-and-alerting.md)  
+- **Advanced Troubleshooting:** [docs/appendix-troubleshooting-advanced.md](docs/appendix-troubleshooting-advanced.md)  
+- **DR Playbooks & Ops Runbooks:** [docs/appendix-dr-and-ops-runbooks.md](docs/appendix-dr-and-ops-runbooks.md)
 
 ---
 
