@@ -120,4 +120,81 @@ The script will:
 - Temporary Public IPs: Only for initial configuration, easily removed
 - Role-Based Access: VMs have minimal required permissions
 
+### 🚀 Performance Features
+
+- Premium SSD Storage: Optimized for SQL Server workloads
+- Availability Sets: Protection against hardware failures
+- Standard Load Balancer: High performance and reliability
+- SQL VM Resource Provider: Automated patching and backups
+
+### 🛠️ Operational Features
+
+- Automated Deployment: Single script execution
+- Idempotent Operations: Safe to re-run
+- Comprehensive Logging: Color-coded output for easy tracking
+- Deployment Records: Timestamped files with all details
+- Error Recovery: Graceful handling with cleanup guidance
+
+## 📖 Deployment Guide
+
+Step-by-Step Walkthrough
+
+1. Pre-Deployment Checklist
+
+```bash
+# Login to Azure
+az login
+
+# Set subscription (if multiple)
+az account set --subscription "Your Subscription Name"
+
+# Verify subscription
+az account show --query "{Name:name, ID:id, State:state}" -o table
+```
+
+2. Customize Deployment (Optional)
+
+Edit the script to modify:
+
+```bash
+# Default values you can change
+LOCATION="centralus"           # Azure region
+VM_SIZE="Standard_D2s_v3"      # VM size
+ADMIN_USERNAME="sqladmin"      # Admin username
+```
+
+3. Run Deployment
+
+```bash
+./deploy-sql-vms-simple.sh
+```
+
+4. Monitor Progress
+
+The script provides real-time status updates:
+
+```bash
+✓ Resource group creation completed successfully
+✓ Key Vault creation completed successfully
+✓ Virtual network creation completed successfully
+... (continues for all resources)
+```
+
+5. Access Deployment Information
+
+After completion, find your deployment details:
+
+```bash
+# View the generated deployment file
+cat deployment-info-[TIMESTAMP].txt
+
+# Retrieve credentials
+az keyvault secret show --vault-name [YOUR-KEYVAULT] --name sql-admin-password --query value -o tsv
+```
+
+
+
+
+
+
 
