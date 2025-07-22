@@ -192,6 +192,66 @@ cat deployment-info-[TIMESTAMP].txt
 az keyvault secret show --vault-name [YOUR-KEYVAULT] --name sql-admin-password --query value -o tsv
 ```
 
+## 🔧 Post-Deployment Configuration
+
+### Phase 1: Initial VM Access
+
+1. Connect to VMs
+
+```bash
+# From Windows
+mstsc /v:[VM-PUBLIC-IP]
+
+# From macOS/Linux
+# Use Microsoft Remote Desktop or similar
+```
+
+2. Configure Firewall Rules (Run on both VMs)
+
+```bash
+# Allow SQL Server
+New-NetFirewallRule -DisplayName "SQL Server" -Direction Inbound -Protocol TCP -LocalPort 1433 -Action Allow
+
+# Allow AG Endpoint
+New-NetFirewallRule -DisplayName "AG Endpoint" -Direction Inbound -Protocol TCP -LocalPort 5022 -Action Allow
+
+# Allow Probe Port
+New-NetFirewallRule -DisplayName "SQL Probe Port" -Direction Inbound -Protocol TCP -LocalPort 59999 -Action Allow
+```
+
+### Phase 2: Windows Failover Cluster
+
+1. Install Clustering Feature (Both VMs)
+
+```bash
+Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools
+Restart-Computer
+```
+
+2. Create Cluster (Run from VM1)
+
+```bash
+New-Cluster -Name SQLCLUSTER -Node sqlvm1,sqlvm2 -NoStorage
+
+# Configure for Azure
+(Get-Cluster).SameSubnetDelay = 2000
+(Get-Cluster).SameSubnetThreshold = 15
+```
+
+### Phase 3: SQL Server Always On
+
+1. Enable Always On (Both VMs)
+  - Open SQL Server Configuration Manager
+  - Right-click SQL Server service → Properties
+  - Enable Always On Availability Groups
+  - Restart SQL Server service
+
+2. Create AG Endpoints (Both VMs)
+
+
+
+
+
 
 
 
