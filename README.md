@@ -103,3 +103,5 @@ The script will:
 ## Architecture
 
 Network Topology
+
+![SQL HA Architecture](images/sql-ha-architecture-resized.png)
