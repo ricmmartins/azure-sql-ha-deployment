@@ -494,11 +494,10 @@ Code Style
 3. Follow bash best practices
 4. Test your changes thoroughly
 
+⭐ If you find this helpful, please star the repository!
+
 ## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
-
---
-⭐ If you find this helpful, please star the repository!
 
 
 
