@@ -2,68 +2,98 @@
 keywords: azure sql server, high availability, always on availability groups, azure deployment, sql server clustering, azure load balancer, infrastructure as code, bash automation, azure key vault, managed identities, disaster recovery, sql server 2019, azure networking, devops automation
 -->
 
-# Azure SQL Server High Availability Infrastructure Deployment
+# Azure SQL Server High Availability Infrastructure Deployment {#top}
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Azure](https://img.shields.io/badge/Azure-Ready-blue?logo=microsoft-azure)](https://azure.microsoft.com)
 [![SQL Server 2019](https://img.shields.io/badge/SQL%20Server-2019-red?logo=microsoft-sql-server)](https://www.microsoft.com/sql-server/sql-server-2019)
 [![Bash Script](https://img.shields.io/badge/Bash-Script-green?logo=gnu-bash)](https://www.gnu.org/software/bash/)
 
-> **Azure SQL Server High Availability Deployment** - Automated infrastructure deployment for SQL Server Always On Availability Groups on Microsoft Azure. Features include Azure Load Balancer configuration, Key Vault integration, managed identities, and comprehensive post-deployment guides. Perfect for DBAs and DevOps engineers looking to quickly deploy production-ready SQL Server HA environments.
+> **Automated deployment of a production-ready SQL Server Always On Availability Groups infrastructure on Microsoft Azure.**
+> Includes Azure Load Balancer configuration, Key Vault integration, Managed Identities, and comprehensive post-deployment guidance.
 
-A production-ready automated deployment solution for SQL Server high availability infrastructure on Azure, designed for Always On Availability Groups configuration.
+---
 
-## 🎯 Overview
+## Table of Contents
 
-This solution provides a **one-click deployment** script that creates a complete SQL Server high availability infrastructure on Azure. The script automates the creation of all necessary Azure resources while following Microsoft best practices for security, networking, and high availability.
+- [Overview](#overview)
+- [What Gets Deployed](#what-gets-deployed)
+- [Deployment Time](#deployment-time)
+- [Prerequisites](#prerequisites)
+  - [Required Tools](#required-tools)
+  - [Azure Requirements](#azure-requirements)
+  - [Quick Prerequisites Check](#quick-prerequisites-check)
+- [Quick Start](#quick-start)
+- [Architecture](#architecture)
+  - [Network Topology](#network-topology)
+  - [High Availability Design](#high-availability-design)
+- [Features](#features)
+  - [Security Features](#security-features)
+  - [Performance Features](#performance-features)
+  - [Operational Features](#operational-features)
+- [Deployment Guide](#deployment-guide)
+- [Post-Deployment Configuration](#post-deployment-configuration)
+  - [Phase 1: Initial VM Access](#phase-1-initial-vm-access)
+  - [Phase 2: Windows Failover Cluster](#phase-2-windows-failover-cluster)
+  - [Phase 3: SQL Server Always On](#phase-3-sql-server-always-on)
+  - [Phase 4: Configure AG Listener](#phase-4-configure-ag-listener)
+- [Security](#security)
+  - [Security Best Practices Implemented](#security-best-practices-implemented)
+  - [Post-Deployment Security Hardening](#post-deployment-security-hardening)
+- [Cost Analysis](#cost-analysis)
+  - [Estimated Monthly Costs](#estimated-monthly-costs)
+  - [Cost Optimization Strategies](#cost-optimization-strategies)
+- [Troubleshooting](#troubleshooting)
+  - [Common Issues and Solutions](#common-issues-and-solutions)
+- [Best Practices](#best-practices)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [License](#license)
+- [Changelog](#changelog)
 
-### 🚀 What Gets Deployed
+---
 
-- **2x SQL Server 2019 VMs** in an Availability Set
-- **Azure Load Balancer** (Standard SKU) pre-configured for AG Listener
-- **Virtual Network** with custom subnet and NSG rules
-- **Azure Key Vault** for secure credential management
-- **Managed Identities** for enhanced security
-- **Premium SSD storage** optimized for SQL Server workloads
+## 🎯 Overview {#overview}
 
-### ⏱️ Deployment Time
+This solution provides a **one-click deployment** script that creates a complete SQL Server high availability infrastructure on Azure, following Microsoft best practices for security, networking, and high availability.
 
-- **Infrastructure**: ~15-20 minutes
-- **Post-configuration**: ~30-45 minutes (manual)
+### 🚀 What Gets Deployed {#what-gets-deployed}
 
-## 📋 Table of Contents
+- 2× SQL Server 2019 VMs in an Availability Set
+- Azure Standard Load Balancer preconfigured for the AG Listener
+- Virtual Network with custom subnet and NSG rules
+- Azure Key Vault for secure credential management
+- Managed Identities for enhanced security
+- Premium SSD storage optimized for SQL Server workloads
 
-- [Prerequisites](#-prerequisites)
-- [Quick Start](#-quick-start)
-- [Architecture](#-architecture)
-- [Features](#-features)
-- [Deployment Guide](#-deployment-guide)
-- [Post-Deployment Configuration](#-post-deployment-configuration)
-- [Security](#-security)
-- [Cost Analysis](#-cost-analysis)
-- [Troubleshooting](#-troubleshooting)
-- [Best Practices](#-best-practices)
-- [FAQ](#-faq)
-- [Contributing](#-contributing)
+### ⏱️ Deployment Time {#deployment-time}
 
-## 📌 Prerequisites
+- **Infrastructure:** ~15–20 minutes
+- **Post-configuration:** ~30–45 minutes (manual)
 
-### Required Tools
-| Tool | Minimum Version | Installation Guide |
-|------|----------------|-------------------|
-| Azure CLI | 2.40.0+ | [Install Guide](https://docs.microsoft.com/cli/azure/install-azure-cli) |
-| Bash | 4.0+ | Included in Linux/macOS, [WSL for Windows](https://docs.microsoft.com/windows/wsl/install) |
-| curl | Any | Usually pre-installed |
+---
 
-### Azure Requirements
-- ✅ Active Azure Subscription
-- ✅ Contributor or Owner role on subscription
-- ✅ Available quota for:
-  - 2x Standard_D2s_v3 VMs
-  - 1x Standard Load Balancer
-  - 6x Premium SSD disks
+## 📌 Prerequisites {#prerequisites}
 
-### Quick Prerequisites Check
+### Required Tools {#required-tools}
+
+| Tool       | Minimum Version | Installation Guide                                                                 |
+|------------|------------------|-------------------------------------------------------------------------------------|
+| Azure CLI  | 2.40.0+          | https://learn.microsoft.com/cli/azure/install-azure-cli                          |
+| Bash       | 4.0+             | Included in Linux/macOS, or use WSL on Windows: https://learn.microsoft.com/windows/wsl/install |
+| curl       | Any              | Usually pre-installed                                                              |
+
+### Azure Requirements {#azure-requirements}
+
+- Active Azure Subscription
+- Contributor or Owner role on the subscription
+- Available quota for:
+  - 2× Standard_D2s_v3 VMs
+  - 1× Standard Load Balancer
+  - 6× Premium SSD disks
+
+### Quick Prerequisites Check {#quick-prerequisites-check}
+
 ```bash
 # Check Azure CLI
 az --version
@@ -72,11 +102,14 @@ az --version
 az account show
 
 # Check available VM quota
-az vm list-usage --location centralus --query "[?name.value=='standardDSv3Family'].{Name:name.value, Current:currentValue, Limit:limit}" -o table
+az vm list-usage --location centralus   --query "[?name.value=='standardDSv3Family'].{Name:name.value, Current:currentValue, Limit:limit}" -o table
+```
 
-## 🚀 Quick Start
+---
 
-1. Download and Run
+## 🚀 Quick Start {#quick-start}
+
+1. **Download and run**
 
 ```bash
 # Download the script
@@ -89,57 +122,61 @@ chmod +x deploy-sql-vms-simple.sh
 ./deploy-sql-vms-simple.sh
 ```
 
-2. What Happens Next
+2. **What happens next**
 
 The script will:
 
-- ✅ Generate unique resource names with timestamp
-- ✅ Create all Azure resources
-- ✅ Configure networking and security
-- ✅ Store credentials securely in Key Vault
-- ✅ Output connection information
-- ✅ Save deployment details to a file
+- Generate unique resource names with timestamp
+- Create all Azure resources
+- Configure networking and security
+- Store credentials securely in Key Vault
+- Output connection information
+- Save deployment details to a file
 
-## Architecture
+---
 
-### Network Topology
+## 🏗️ Architecture {#architecture}
 
-![SQL HA Architecture](images/sql-ha-architecture-resized.png)
+### Network Topology {#network-topology}
 
-### High Availability Design
+![SQL HA Network Topology diagram showing VNet, subnets, load balancer, and two SQL VMs](images/sql-ha-architecture-resized.png "SQL HA Architecture - Network Topology")
 
-![SQL HA Architecture](images/ha-design.png)
+### High Availability Design {#high-availability-design}
 
-## ✨ Features
+![High Availability design diagram illustrating AG replicas, listener, and probe port](images/ha-design.png "High Availability Design for SQL Server AG")
 
-### Security Features
+---
 
-- Azure Key Vault Integration: All credentials stored securely
-- Managed Identities: No passwords in code or config files
-- Network Isolation: Custom VNet with strict NSG rules
-- Temporary Public IPs: Only for initial configuration, easily removed
-- Role-Based Access: VMs have minimal required permissions
+## ✨ Features {#features}
 
-### Performance Features
+### Security Features {#security-features}
 
-- Premium SSD Storage: Optimized for SQL Server workloads
-- Availability Sets: Protection against hardware failures
-- Standard Load Balancer: High performance and reliability
-- SQL VM Resource Provider: Automated patching and backups
+- Azure Key Vault integration: all credentials stored securely
+- Managed Identities: no passwords in code or config files
+- Network isolation: custom VNet with strict NSG rules
+- Temporary Public IPs: only for initial configuration, easily removed
+- Role-based access: VMs have minimal required permissions
 
-### Operational Features
+### Performance Features {#performance-features}
 
-- Automated Deployment: Single script execution
-- Idempotent Operations: Safe to re-run
-- Comprehensive Logging: Color-coded output for easy tracking
-- Deployment Records: Timestamped files with all details
-- Error Recovery: Graceful handling with cleanup guidance
+- Premium SSD storage: optimized for SQL Server workloads
+- Availability Sets: protection against hardware failures
+- Standard Load Balancer: high performance and reliability
+- SQL VM Resource Provider: automated patching and backups
 
-## 📖 Deployment Guide
+### Operational Features {#operational-features}
 
-### Step-by-Step Walkthrough
+- Automated deployment: single script execution
+- Idempotent operations: safe to re-run
+- Comprehensive logging: color-coded output for easy tracking
+- Deployment records: timestamped files with all details
+- Error recovery: graceful handling with cleanup guidance
 
-1. Pre-Deployment Checklist
+---
+
+## 📖 Deployment Guide {#deployment-guide}
+
+### 1. Pre-Deployment Checklist
 
 ```bash
 # Login to Azure
@@ -152,63 +189,63 @@ az account set --subscription "Your Subscription Name"
 az account show --query "{Name:name, ID:id, State:state}" -o table
 ```
 
-2. Customize Deployment (Optional)
+### 2. Customize Deployment (Optional)
 
-Edit the script to modify:
+Edit the script to modify defaults:
 
 ```bash
 # Default values you can change
-LOCATION="centralus"           # Azure region
-VM_SIZE="Standard_D2s_v3"      # VM size
-ADMIN_USERNAME="sqladmin"      # Admin username
+LOCATION="centralus"            # Azure region
+VM_SIZE="Standard_D2s_v3"       # VM size
+ADMIN_USERNAME="sqladmin"       # Admin username
 ```
 
-3. Run Deployment
+### 3. Run Deployment
 
 ```bash
 ./deploy-sql-vms-simple.sh
 ```
 
-4. Monitor Progress
+### 4. Monitor Progress
 
 The script provides real-time status updates:
 
-```bash
+```text
 ✓ Resource group creation completed successfully
 ✓ Key Vault creation completed successfully
 ✓ Virtual network creation completed successfully
 ... (continues for all resources)
 ```
 
-5. Access Deployment Information
-
-After completion, find your deployment details:
+### 5. Access Deployment Information
 
 ```bash
 # View the generated deployment file
 cat deployment-info-[TIMESTAMP].txt
 
 # Retrieve credentials
-az keyvault secret show --vault-name [YOUR-KEYVAULT] --name sql-admin-password --query value -o tsv
+az keyvault secret show --vault-name <YOUR-KEYVAULT> --name sql-admin-password --query value -o tsv
 ```
 
-## 🔧 Post-Deployment Configuration
+---
 
-### Phase 1: Initial VM Access
+## 🔧 Post-Deployment Configuration {#post-deployment-configuration}
 
-1. Connect to VMs
+### Phase 1: Initial VM Access {#phase-1-initial-vm-access}
+
+1. **Connect to VMs**
 
 ```bash
 # From Windows
-mstsc /v:[VM-PUBLIC-IP]
+mstsc /v:<VM-PUBLIC-IP>
 
 # From macOS/Linux
-# Use Microsoft Remote Desktop or similar
+# Use Microsoft Remote Desktop or equivalent RDP client
 ```
 
-2. Configure Firewall Rules (Run on both VMs)
+2. **Configure Firewall Rules (run on both VMs)**
 
-```bash
+```powershell
 # Allow SQL Server
 New-NetFirewallRule -DisplayName "SQL Server" -Direction Inbound -Protocol TCP -LocalPort 1433 -Action Allow
 
@@ -219,18 +256,18 @@ New-NetFirewallRule -DisplayName "AG Endpoint" -Direction Inbound -Protocol TCP 
 New-NetFirewallRule -DisplayName "SQL Probe Port" -Direction Inbound -Protocol TCP -LocalPort 59999 -Action Allow
 ```
 
-### Phase 2: Windows Failover Cluster
+### Phase 2: Windows Failover Cluster {#phase-2-windows-failover-cluster}
 
-1. Install Clustering Feature (Both VMs)
+1. **Install Clustering Feature (both VMs)**
 
-```bash
+```powershell
 Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools
 Restart-Computer
 ```
 
-2. Create Cluster (Run from VM1)
+2. **Create Cluster (run from VM1)**
 
-```bash
+```powershell
 New-Cluster -Name SQLCLUSTER -Node sqlvm1,sqlvm2 -NoStorage
 
 # Configure for Azure
@@ -238,35 +275,37 @@ New-Cluster -Name SQLCLUSTER -Node sqlvm1,sqlvm2 -NoStorage
 (Get-Cluster).SameSubnetThreshold = 15
 ```
 
-### Phase 3: SQL Server Always On
+### Phase 3: SQL Server Always On {#phase-3-sql-server-always-on}
 
-1. Enable Always On (Both VMs)
-    - Open SQL Server Configuration Manager
-    - Right-click SQL Server service → Properties
-    - Enable Always On Availability Groups
-    - Restart SQL Server service
+1. **Enable Always On (both VMs)**
 
-2. Create AG Endpoints (Both VMs)
+- Open SQL Server Configuration Manager
+- Right-click SQL Server service → Properties
+- Enable Always On Availability Groups
+- Restart the SQL Server service
 
-```bash
+2. **Create AG Endpoints (both VMs)**
+
+```sql
 CREATE ENDPOINT [Hadr_endpoint]
 STATE = STARTED
 AS TCP (LISTENER_PORT = 5022)
 FOR DATA_MIRRORING (
     ROLE = ALL,
     ENCRYPTION = REQUIRED ALGORITHM AES
-)
+);
 ```
 
-3. Create Availability Group (Primary only)
+3. **Create Availability Group (primary only)**
 
-```bash
+```sql
 -- Create sample database
-CREATE DATABASE TestDB
+CREATE DATABASE TestDB;
 GO
 
 -- Full backup (required for AG)
-BACKUP DATABASE TestDB TO DISK = 'C:\Backup\TestDB.bak'
+BACKUP DATABASE TestDB TO DISK = 'C:\\Backup\\TestDB.bak';
+GO
 
 -- Create AG
 CREATE AVAILABILITY GROUP [TestAG]
@@ -277,132 +316,134 @@ REPLICA ON
         FAILOVER_MODE = AUTOMATIC),
     'sqlvm2' WITH (ENDPOINT_URL = 'TCP://sqlvm2:5022',
         AVAILABILITY_MODE = SYNCHRONOUS_COMMIT,
-        FAILOVER_MODE = AUTOMATIC)
+        FAILOVER_MODE = AUTOMATIC);
 ```
 
-### Phase 4: Configure AG Listener
+### Phase 4: Configure AG Listener {#phase-4-configure-ag-listener}
 
-1. Create Listener (Primary)
+1. **Create Listener (primary)**
 
-```bash
+```sql
 ALTER AVAILABILITY GROUP [TestAG]
 ADD LISTENER 'AGListener' (
-    WITH IP (('10.0.1.100', '255.255.255.0')),
-    PORT=1433
-)
+    WITH IP (("10.0.1.100", '255.255.255.0')),
+    PORT = 1433
+);
 ```
 
-2. Configure Cluster Parameters (PowerShell on any node)
+2. **Configure Cluster Parameters (PowerShell on any node)**
 
-```bash
+```powershell
 $ClusterNetworkName = "Cluster Network 1"
-$IPResourceName = "AGListener_10.0.1.100"
-$ListenerILBIP = "10.0.1.100"
-[int]$ProbePort = 59999
+$IPResourceName     = "AGListener_10.0.1.100"
+$ListenerILBIP      = "10.0.1.100"
+[int]$ProbePort     = 59999
 
 Import-Module FailoverClusters
 Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{
-    "Address"="$ListenerILBIP";
-    "ProbePort"=$ProbePort;
-    "SubnetMask"="255.255.255.255";
-    "Network"="$ClusterNetworkName";
-    "EnableDhcp"=0
+    Address     = $ListenerILBIP;
+    ProbePort   = $ProbePort;
+    SubnetMask  = "255.255.255.255";
+    Network     = $ClusterNetworkName;
+    EnableDhcp  = 0
 }
 ```
 
-## 🔒 Security
+---
 
-### Security Best Practices Implemented
+## 🔒 Security {#security}
 
-| Feature               | Implementation              | Benefit                         |
-|-----------------------|-----------------------------|----------------------------------|
-| Credential Management | Azure Key Vault             | No hardcoded passwords           |
-| Network Security      | Custom NSG rules            | Minimal attack surface           |
-| Identity Management   | Managed Identities          | No credential rotation needed    |
-| Access Control        | RBAC + Key Vault policies   | Principle of least privilege     |
-| Encryption            | TLS for AG endpoints        | Data in transit protection       |
+### Security Best Practices Implemented {#security-best-practices-implemented}
 
-### Post-Deployment Security Hardening
+| Feature               | Implementation            | Benefit                          |
+|-----------------------|---------------------------|----------------------------------|
+| Credential Management | Azure Key Vault           | No hardcoded passwords           |
+| Network Security      | Custom NSG rules          | Minimal attack surface           |
+| Identity Management   | Managed Identities        | No credential rotation needed    |
+| Access Control        | RBAC + Key Vault policies | Principle of least privilege     |
+| Encryption            | TLS for AG endpoints      | Data in transit protection       |
 
-1. Remove Public IPs
+### Post-Deployment Security Hardening {#post-deployment-security-hardening}
+
+1. **Remove Public IPs**
 
 ```bash
-# After configuration is complete
-az network public-ip delete -g [RESOURCE-GROUP] -n sqlvm1-pip --yes
-az network public-ip delete -g [RESOURCE-GROUP] -n sqlvm2-pip --yes
+az network public-ip delete -g <RESOURCE-GROUP> -n sqlvm1-pip --yes
+az network public-ip delete -g <RESOURCE-GROUP> -n sqlvm2-pip --yes
 ```
 
-2. Enable Azure Bastion (Recommended)
+2. **Enable Azure Bastion (recommended)**
 
 ```bash
-az network bastion create \
-    --name sql-bastion \
-    --public-ip-address sql-bastion-pip \
-    --resource-group [RESOURCE-GROUP] \
-    --vnet-name sql-vnet
+az network bastion create   --name sql-bastion   --public-ip-address sql-bastion-pip   --resource-group <RESOURCE-GROUP>   --vnet-name sql-vnet
 ```
 
-3. Configure SQL Server Security
-   
-    - Change default SA password
-    - Disable SA account if not needed
-    - Enable SQL Server audit logging
-    - Configure TDE for databases
+3. **Configure SQL Server Security**
 
-## 💰 Cost Analysis
+- Change default SA password
+- Disable SA account if not needed
+- Enable SQL Server audit logging
+- Configure Transparent Data Encryption (TDE)
 
-### Estimated Monthly Costs (Central US Region)
+---
 
-| Resource      | Specification                                   | Est. Monthly Cost |
-|---------------|--------------------------------------------------|-------------------:|
-| 2x SQL VMs    | Standard_D2s_v3 (2 vCPU, 8GB RAM)                | $280               |
-| Storage       | 2x OS (128GB) + 4x Data (128GB + 256GB each)     | $140               |
-| Load Balancer | Standard SKU                                     | $25                |
-| Key Vault     | Standard tier, minimal transactions              | <$1                |
-| Network       | Bandwidth (est. 100GB/month)                     | $9                 |
-| **Total**     |                                                  | **~$455/month**    |
+## 💰 Cost Analysis {#cost-analysis}
 
-### Cost Optimization Strategies
+### Estimated Monthly Costs (Central US Region) {#estimated-monthly-costs}
 
-1. Development/Test Environments
-    - Use B-series VMs: Save ~40%
-    - Schedule auto-shutdown: Save ~50%
-    - Use Dev/Test subscription: Save ~55%
+| Resource       | Specification                                   | Est. Monthly Cost |
+|----------------|--------------------------------------------------|-------------------:|
+| 2× SQL VMs     | Standard_D2s_v3 (2 vCPU, 8 GB RAM)               | $280               |
+| Storage        | 2× OS (128 GB) + 4× Data (128 GB + 256 GB each)  | $140               |
+| Load Balancer  | Standard SKU                                     | $25                |
+| Key Vault      | Standard tier, minimal transactions              | <$1                |
+| Network        | Bandwidth (est. 100 GB/month)                    | $9                 |
+| **Total**      |                                                  | **~$455/month**    |
 
-2. Production Environments
+### Cost Optimization Strategies {#cost-optimization-strategies}
 
-    - Reserved Instances (1-year): Save ~40%
-    - Reserved Instances (3-year): Save ~60%
-    - Azure Hybrid Benefit: Save ~40%
+**Development/Test Environments**
 
-3. Storage Optimization
+- Use B-series VMs: save ~40%
+- Schedule auto-shutdown: save ~50%
+- Use Dev/Test subscription: save ~55%
 
-    - Use Standard SSD for non-critical workloads
-    - Implement data compression
-    - Archive old backups to Cool storage
+**Production Environments**
 
-## 🔍 Troubleshooting
+- Reserved Instances (1-year): save ~40%
+- Reserved Instances (3-year): save ~60%
+- Azure Hybrid Benefit: save ~40%
 
-### Common Issues and Solutions
+**Storage Optimization**
 
-1. Cluster Creation Fails
+- Use Standard SSD for non-critical workloads
+- Implement data compression
+- Archive old backups to Cool storage
 
-```bash
+---
+
+## 🔍 Troubleshooting {#troubleshooting}
+
+### Common Issues and Solutions {#common-issues-and-solutions}
+
+**1. Cluster Creation Fails**
+
+```powershell
 # Validate cluster configuration
 Test-Cluster -Node sqlvm1,sqlvm2
 
 # Check Windows Firewall
-Get-NetFirewallRule | Where DisplayName -like "*Cluster*"
+Get-NetFirewallRule | Where-Object DisplayName -like "*Cluster*"
 
 # Verify network connectivity
 Test-NetConnection -ComputerName sqlvm2 -Port 3343
 ```
 
-2. AG Listener Not Responding
+**2. AG Listener Not Responding**
 
-```bash
+```powershell
 # Check cluster resource state
-Get-ClusterResource | Where ResourceType -eq "IP Address"
+Get-ClusterResource | Where-Object ResourceType -eq "IP Address"
 
 # Verify probe port response
 netstat -an | findstr 59999
@@ -411,96 +452,135 @@ netstat -an | findstr 59999
 Test-NetConnection -ComputerName 10.0.1.100 -Port 59999
 ```
 
-3. SQL Connection Timeouts
+**3. SQL Connection Timeouts**
 
-```bash
+```sql
 -- Check AG state
-SELECT * FROM sys.availability_groups_cluster
-SELECT * FROM sys.dm_hadr_availability_replica_states
+SELECT * FROM sys.availability_groups_cluster;
+SELECT * FROM sys.dm_hadr_availability_replica_states;
 
 -- Verify listener configuration
-SELECT * FROM sys.availability_group_listeners
+SELECT * FROM sys.availability_group_listeners;
 ```
 
-Diagnostic Commands Reference
+**Diagnostic Commands Reference**
 
 ```bash
 # Azure CLI diagnostics
-az vm show -g [RG] -n sqlvm1 --query "[provisioningState, vmId]"
-az network lb show -g [RG] -n sql-lb --query provisioningState
-
-# PowerShell diagnostics (on VMs)
-Get-Cluster | fl *
-Get-ClusterNode | fl *
-Get-ClusterResource | fl *
-
-# SQL Server diagnostics
-SELECT @@SERVERNAME, @@VERSION
-EXEC sp_helpserver
+az vm show -g <RG> -n sqlvm1 --query "[provisioningState, vmId]"
+az network lb show -g <RG> -n sql-lb --query provisioningState
 ```
 
-## 📚 Best Practices
+```powershell
+# PowerShell diagnostics (on VMs)
+Get-Cluster | Format-List *
+Get-ClusterNode | Format-List *
+Get-ClusterResource | Format-List *
+```
 
-Pre-Deployment
-- ✅ Verify Azure quotas and limits
-- ✅ Plan IP addressing scheme
-- ✅ Document security requirements
-- ✅ Prepare runbooks for operations
+```sql
+-- SQL Server diagnostics
+SELECT @@SERVERNAME, @@VERSION;
+EXEC sp_helpserver;
+```
 
-During Deployment
-- ✅ Monitor Azure Activity Log
-- ✅ Save all output logs
-- ✅ Test connectivity after each phase
-- ✅ Document any customizations
+---
 
-Post-Deployment
-- ✅ Configure monitoring and alerts
-- ✅ Implement backup strategy
-- ✅ Schedule patching windows
-- ✅ Create disaster recovery plan
+## 📚 Best Practices {#best-practices}
 
+**Pre-Deployment**
 
-## ❓ FAQ
+- Verify Azure quotas and limits
+- Plan IP addressing scheme
+- Document security requirements
+- Prepare runbooks for operations
 
-General Questions
-- Q: Can I change the Azure region? A: Yes, modify the LOCATION variable in the script. Ensure the region supports all required services.
-- Q: Can I use different VM sizes? A: Yes, modify the VM_SIZE variable. Ensure the size supports Premium storage.
-- Q: How do I add more replicas? A: The script creates 2 VMs. For more replicas, modify the VM creation loop and adjust the availability set fault domains.
+**During Deployment**
 
-Technical Questions
-- Q: Why is a load balancer needed? A: Azure doesn't support gratuitous ARP, so a load balancer provides the virtual IP for the AG listener.
-- Q: Can I use Basic tier load balancer? A: No, Standard tier is required for the features needed by SQL Server AG.
-- Q: What's the probe port for? A: The probe port (59999) allows the load balancer to detect which replica is primary.
+- Monitor Azure Activity Log
+- Save all output logs
+- Test connectivity after each phase
+- Document any customizations
 
-Troubleshooting Questions
-- Q: My deployment failed. How do I clean up? A: Run az group delete --name [RESOURCE-GROUP] --yes
-- Q: I can't RDP to the VMs. What should I check? A: Verify your public IP hasn't changed, check NSG rules, and ensure VMs are running.
-- Q: The AG listener isn't working. What's wrong? A: Check cluster resource state, verify probe port configuration, and ensure load balancer backend pool has both VMs.
+**Post-Deployment**
 
-## 🤝 Contributing
-We welcome contributions! Please see our Contributing Guide for details.
+- Configure monitoring and alerts
+- Implement backup strategy
+- Schedule patching windows
+- Create a disaster recovery plan
 
-How to Contribute
+---
+
+## ❓ FAQ {#faq}
+
+**General Questions**
+
+- **Q:** Can I change the Azure region?  
+  **A:** Yes, modify the `LOCATION` variable in the script. Ensure the region supports all required services.
+
+- **Q:** Can I use different VM sizes?  
+  **A:** Yes, modify the `VM_SIZE` variable. Ensure the size supports Premium storage.
+
+- **Q:** How do I add more replicas?  
+  **A:** The script creates 2 VMs. For more replicas, extend the VM creation loop and adjust availability set fault domains.
+
+**Technical Questions**
+
+- **Q:** Why is a load balancer needed?  
+  **A:** Azure doesn't support gratuitous ARP; a load balancer provides the virtual IP for the AG listener.
+
+- **Q:** Can I use a Basic tier load balancer?  
+  **A:** No. Standard tier is required for the features needed by SQL Server AG.
+
+- **Q:** What's the probe port for?  
+  **A:** The probe port (`59999`) lets the load balancer detect which replica is primary.
+
+**Troubleshooting Questions**
+
+- **Q:** My deployment failed. How do I clean up?  
+  **A:** `az group delete --name <RESOURCE-GROUP> --yes`
+
+- **Q:** I can't RDP to the VMs. What should I check?  
+  **A:** Verify your public IP, check NSG rules, and ensure VMs are running.
+
+- **Q:** The AG listener isn't working. What's wrong?  
+  **A:** Check cluster resource state, verify probe port configuration, and ensure the load balancer backend pool has both VMs.
+
+---
+
+## 🤝 Contributing {#contributing}
+
+We welcome contributions! Please see the CONTRIBUTING.md for details.
+
+**How to contribute:**
 
 1. Fork the repository
-2. Create a feature branch (git checkout -b feature/AmazingFeature)
-3. Commit your changes (git commit -m 'Add some AmazingFeature')
-4. Push to the branch (git push origin feature/AmazingFeature)
+2. Create a feature branch: `git checkout -b feature/AmazingFeature`
+3. Commit your changes: `git commit -m "Add some AmazingFeature"`
+4. Push to the branch: `git push origin feature/AmazingFeature`
 5. Open a Pull Request
 
-Code Style
+**Code style:**
+
 1. Use consistent indentation (4 spaces)
 2. Add comments for complex logic
-3. Follow bash best practices
+3. Follow Bash best practices
 4. Test your changes thoroughly
 
 ⭐ If you find this helpful, please star the repository!
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+---
 
+## 📄 License {#license}
 
+This project is licensed under the MIT License – see the LICENSE file for details.
 
+---
 
+## 🗒️ Changelog {#changelog}
 
+See CHANGELOG.md for version history and notable changes.
 
+---
+
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
