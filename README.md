@@ -113,7 +113,7 @@ az vm list-usage --location centralus   --query "[?name.value=='standardDSv3Fami
 1. **Download and run**
 
 ```bash
-curl -O https://raw.githubusercontent.com/ricmmartins/azure-sql-ha-deployment/refs/heads/main/deploy-sql-vms-simple.sh
+curl -O https://raw.githubusercontent.com/ricmmartins/azure-sql-ha-deployment/main/deploy-sql-vms-simple.sh
 chmod +x deploy-sql-vms-simple.sh
 ./deploy-sql-vms-simple.sh
 ```
