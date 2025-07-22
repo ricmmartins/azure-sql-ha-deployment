@@ -343,11 +343,10 @@ az network bastion create \
 ```
 
 3. Configure SQL Server Security
-
-  - Change default SA password
-  - Disable SA account if not needed
-  - Enable SQL Server audit logging
-  - Configure TDE for databases
+    - Change default SA password
+    - Disable SA account if not needed
+    - Enable SQL Server audit logging
+    - Configure TDE for databases
 
 ## 💰 Cost Analysis
 
