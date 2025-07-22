@@ -1,3 +1,9 @@
+<!--
+keywords: azure sql server, high availability, always on availability groups, azure deployment, sql server clustering, azure load balancer, infrastructure as code, bash automation, azure key vault, managed identities, disaster recovery, sql server 2019, azure networking, devops automation
+-->
+
+# Azure SQL Server High Availability Infrastructure Deployment
+
 # Azure SQL Server High Availability Infrastructure Deployment
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
