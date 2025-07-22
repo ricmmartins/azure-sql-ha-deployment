@@ -520,41 +520,20 @@ print_post_deployment_steps() {
     print_message $NC "   # PowerShell command to configure probe port response"
     print_message $NC "   netsh advfirewall firewall add rule name=\"SQL Probe Port\" dir=in action=allow protocol=TCP localport=$PROBE_PORT"
 
-    print_message $YELLOW "\n4. CONFIGURE WINDOWS FAILOVER CLUSTER (Inside VMs):"
-    print_message $NC "   a. Install Failover Clustering feature on both VMs:"
-    print_message $NC "      Install-WindowsFeature -Name Failover-Clustering -IncludeManagementTools"
-    print_message $NC "   b. Create cluster (run from VM1):"
-    print_message $NC "      New-Cluster -Name SQLCLUSTER -Node $VM_NAME_1,$VM_NAME_2 -NoStorage"
-    print_message $NC "   c. Set cluster parameters for Azure:"
-    print_message $NC "      (Get-Cluster).SameSubnetDelay = 2000"
-    print_message $NC "      (Get-Cluster).SameSubnetThreshold = 15"
+    print_message $YELLOW "\n4. CONFIGURE WINDOWS FAILOVER CLUSTER (inside the VMs):"
+    print_message $NC "   - Install the Failover Clustering feature on both VMs."
+    print_message $NC "   - Create the Windows Failover Cluster (no shared storage)."
+    print_message $NC "   - Tune Azure-specific heartbeat/timeout parameters for the cluster."
 
-    print_message $YELLOW "\n5. CONFIGURE SQL SERVER ALWAYS ON (Inside VMs):"
-    print_message $NC "   a. Enable Always On in SQL Server Configuration Manager on both VMs"
-    print_message $NC "   b. Restart SQL Server service on both VMs"
-    print_message $NC "   c. Create database mirroring endpoints on both VMs:"
-    print_message $NC "      CREATE ENDPOINT [Hadr_endpoint]"
-    print_message $NC "      STATE = STARTED"
-    print_message $NC "      AS TCP (LISTENER_PORT = 5022)"
-    print_message $NC "      FOR DATA_MIRRORING (ROLE = ALL, ENCRYPTION = REQUIRED ALGORITHM AES)"
-    print_message $NC "   d. Create Availability Group on primary replica"
-    print_message $NC "   e. Join secondary replica to AG"
+    print_message $YELLOW "\n5. CONFIGURE SQL SERVER ALWAYS ON (inside the VMs):"
+    print_message $NC "   - Enable the Always On feature on each SQL Server instance."
+    print_message $NC "   - Restart the SQL Server service after enabling Always On."
+    print_message $NC "   - Create the HADR/mirroring endpoints on each replica."
+    print_message $NC "   - Create the Availability Group on the primary replica and join the secondary."
 
-    print_message $YELLOW "\n6. CONFIGURE AG LISTENER:"
-    print_message $NC "   # Run on primary replica"
-    print_message $NC "   ALTER AVAILABILITY GROUP [YourAG]"
-    print_message $NC "   ADD LISTENER 'AGListener' ("
-    print_message $NC "   WITH IP (('$LISTENER_IP', '255.255.255.0')),"
-    print_message $NC "   PORT=1433);"
-    print_message $NC ""
-    print_message $NC "   # Configure probe port on each replica (PowerShell)"
-    print_message $NC '   $ClusterNetworkName = "Cluster Network 1"'
-    print_message $NC '   $IPResourceName = "AGListener_'$LISTENER_IP'"'
-    print_message $NC '   $ListenerILBIP = "'$LISTENER_IP'"'
-    print_message $NC '   [int]$ProbePort = '$PROBE_PORT
-    print_message $NC ""
-    print_message $NC '   Import-Module FailoverClusters'
-    print_message $NC '   Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{"Address"="$ListenerILBIP";"ProbePort"=$ProbePort;"SubnetMask"="255.255.255.255";"Network"="$ClusterNetworkName";"EnableDhcp"=0}'
+    print_message $YELLOW "\n6. CONFIGURE THE AVAILABILITY GROUP LISTENER:"
+    print_message $NC "   - Create the AG Listener using the Load Balancer’s private IP."
+    print_message $NC "   - Set the required cluster IP resource parameters (address, probe port, subnet mask, etc.)."
 
     print_message $YELLOW "\n7. CONFIGURE FIREWALL RULES (Inside VMs):"
     print_message $NC "   Windows Firewall exceptions for:"
