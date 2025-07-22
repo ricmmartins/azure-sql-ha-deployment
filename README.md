@@ -497,7 +497,7 @@ Code Style
 ## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
----
+--
 ⭐ If you find this helpful, please star the repository!
 
 
