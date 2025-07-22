@@ -53,7 +53,7 @@ keywords: azure sql server, high availability, always on availability groups, az
 
 ---
 
-## 🎯 Overview {#overview}
+## Overview {#overview}
 
 This solution provides a **one-click deployment** script that creates a complete SQL Server high availability infrastructure on Azure, following Microsoft best practices for security, networking, and high availability.
 
