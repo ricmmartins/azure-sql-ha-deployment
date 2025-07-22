@@ -83,7 +83,7 @@ This solution provides a **one-click deployment** script that creates a complete
 | Bash       | 4.0+             | Included in Linux/macOS, or use WSL on Windows: https://learn.microsoft.com/windows/wsl/install |
 | curl       | Any              | Usually pre-installed                                                              |
 
-### Azure Requirements {#azure-requirements}
+### Azure Requirements 
 
 - Active Azure Subscription
 - Contributor or Owner role on the subscription
@@ -92,7 +92,7 @@ This solution provides a **one-click deployment** script that creates a complete
   - 1× Standard Load Balancer
   - 6× Premium SSD disks
 
-### Quick Prerequisites Check {#quick-prerequisites-check}
+### Quick Prerequisites Check 
 
 ```bash
 # Check Azure CLI
