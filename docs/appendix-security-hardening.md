@@ -6,12 +6,12 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    Security Layers                          │
 ├─────────────────────────────────────────────────────────────┤
-│ 🌐 Network Security    │ NSG Rules, VNet Isolation         │
-│ 🔐 Identity & Access   │ Managed Identities, RBAC          │
-│ 💾 Data Protection     │ TDE, Backup Encryption            │
-│ 🔑 Key Management      │ Azure Key Vault                   │
-│ 📊 Monitoring          │ Azure Monitor, Defender for Cloud │
-│ 🛡️ Endpoint Protection │ Windows Defender, Updates         │
+│ Network Security    │ NSG Rules, VNet Isolation         │
+│ Identity & Access   │ Managed Identities, RBAC          │
+│ Data Protection     │ TDE, Backup Encryption            │
+│ Key Management      │ Azure Key Vault                   │
+│ Monitoring          │ Azure Monitor, Defender for Cloud │
+│ Endpoint Protection │ Windows Defender, Updates         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
