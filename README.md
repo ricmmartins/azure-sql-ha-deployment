@@ -241,10 +241,10 @@ New-Cluster -Name SQLCLUSTER -Node sqlvm1,sqlvm2 -NoStorage
 ### Phase 3: SQL Server Always On
 
 1. Enable Always On (Both VMs)
-  - Open SQL Server Configuration Manager
-  - Right-click SQL Server service → Properties
-  - Enable Always On Availability Groups
-  - Restart SQL Server service
+    - Open SQL Server Configuration Manager
+    - Right-click SQL Server service → Properties
+    - Enable Always On Availability Groups
+    - Restart SQL Server service
 
 2. Create AG Endpoints (Both VMs)
 
