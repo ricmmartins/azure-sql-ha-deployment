@@ -73,3 +73,33 @@ az account show
 
 # Check available VM quota
 az vm list-usage --location centralus --query "[?name.value=='standardDSv3Family'].{Name:name.value, Current:currentValue, Limit:limit}" -o table
+
+## 🚀 Quick Start
+
+1. Download and Run
+
+```bash
+# Download the script
+curl -O https://raw.githubusercontent.com/yourusername/azure-sql-ha/main/deploy-sql-vms-simple.sh
+
+# Make it executable
+chmod +x deploy-sql-vms-simple.sh
+
+# Run the deployment
+./deploy-sql-vms-simple.sh
+```
+
+2. What Happens Next
+
+The script will:
+
+✅ Generate unique resource names with timestamp
+✅ Create all Azure resources
+✅ Configure networking and security
+✅ Store credentials securely in Key Vault
+✅ Output connection information
+✅ Save deployment details to a file
+
+## Architecture
+
+Network Topology
