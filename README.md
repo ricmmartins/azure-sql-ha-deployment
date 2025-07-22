@@ -389,7 +389,7 @@ az network bastion create   --name sql-bastion   --public-ip-address sql-bastion
 
 ## Cost Analysis 
 
-### Estimated Monthly Costs (Central US Region) {#estimated-monthly-costs}
+### Estimated Monthly Costs (Central US Region) 
 
 | Resource       | Specification                                   | Est. Monthly Cost |
 |----------------|--------------------------------------------------|-------------------:|
