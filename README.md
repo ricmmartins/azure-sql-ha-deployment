@@ -241,7 +241,7 @@ After the infrastructure deployment completes, you'll need to configure Windows 
    - Install Failover Clustering feature
    - Create a cluster without shared storage
    - Configure cluster network settings for Azure
-   - Reference: [Create failover cluster for Always On](https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/create-a-windows-failover-cluster)
+   - Reference: [Create failover cluster for Always On](https://learn.microsoft.com/en-us/windows-server/failover-clustering/create-failover-cluster)
 
 3. **SQL Server Always On Configuration**
    - Enable Always On in SQL Server Configuration Manager
