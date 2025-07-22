@@ -229,6 +229,49 @@ az keyvault secret show --vault-name <YOUR-KEYVAULT> --name sql-admin-password -
 
 ## Post-Deployment Configuration
 
+After the infrastructure deployment completes, you'll need to configure Windows Failover Clustering and SQL Server Always On Availability Groups. The script outputs provide the necessary connection details and IP addresses.
+
+### Configuration Overview
+
+1. **Initial Setup**
+   - Connect to both VMs using the temporary public IPs
+   - Configure Windows Firewall rules for SQL Server, AG endpoints, and health probe
+   - Reference: [SQL Server ports documentation](https://docs.microsoft.com/en-us/sql/sql-server/install/configure-the-windows-firewall-to-allow-sql-server-access)
+
+2. **Windows Failover Cluster**
+   - Install Failover Clustering feature
+   - Create a cluster without shared storage
+   - Configure cluster network settings for Azure
+   - Reference: [Create failover cluster for Always On](https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/create-a-windows-failover-cluster)
+
+3. **SQL Server Always On Configuration**
+   - Enable Always On in SQL Server Configuration Manager
+   - Create database mirroring endpoints
+   - Create and configure the Availability Group
+   - Reference: [Configure Always On Availability Groups](https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/configuration-of-a-server-instance-for-always-on-availability-groups-sql-server)
+
+4. **Availability Group Listener**
+   - Create the AG listener using the load balancer IP (10.0.1.100)
+   - Configure cluster parameters for Azure load balancer integration
+   - Reference: [Create or configure an availability group listener](https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/create-or-configure-an-availability-group-listener-sql-server)
+
+### Important Azure-Specific Configurations
+
+- **Load Balancer Health Probe**: The probe port (59999) must be configured in both Windows Firewall and cluster parameters
+- **Cluster Network Settings**: Azure requires specific timeout values for cluster heartbeat
+- **Floating IP**: Must be enabled on the load balancer rule (already configured by the script)
+
+### 📚 Essential Documentation
+
+- [SQL Server Always On for Azure VMs - Complete Guide](https://docs.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/availability-group-overview)
+- [Configure Always On with Azure Load Balancer](https://docs.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/availability-group-load-balancer-portal-configure)
+- [Azure-specific SQL Server Best Practices](https://docs.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/performance-guidelines-best-practices)
+- [Troubleshooting Always On Availability Groups](https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/troubleshoot-always-on-availability-groups-configuration-sql-server)
+
+
+
+
+
 ### Phase 1: Initial VM Access 
 
 ```bash
