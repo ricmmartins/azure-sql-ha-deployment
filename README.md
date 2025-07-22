@@ -107,7 +107,7 @@ az vm list-usage --location centralus   --query "[?name.value=='standardDSv3Fami
 
 ---
 
-## 🚀 Quick Start {#quick-start}
+## Quick Start
 
 1. **Download and run**
 
@@ -135,21 +135,21 @@ The script will:
 
 ---
 
-## 🏗️ Architecture {#architecture}
+## Architecture
 
-### Network Topology {#network-topology}
+### Network Topology 
 
 ![SQL HA Network Topology diagram showing VNet, subnets, load balancer, and two SQL VMs](images/sql-ha-architecture-resized.png "SQL HA Architecture - Network Topology")
 
-### High Availability Design {#high-availability-design}
+### High Availability Design 
 
 ![High Availability design diagram illustrating AG replicas, listener, and probe port](images/ha-design.png "High Availability Design for SQL Server AG")
 
 ---
 
-## ✨ Features {#features}
+## Features
 
-### Security Features {#security-features}
+### Security Features 
 
 - Azure Key Vault integration: all credentials stored securely
 - Managed Identities: no passwords in code or config files
@@ -157,14 +157,14 @@ The script will:
 - Temporary Public IPs: only for initial configuration, easily removed
 - Role-based access: VMs have minimal required permissions
 
-### Performance Features {#performance-features}
+### Performance Features 
 
 - Premium SSD storage: optimized for SQL Server workloads
 - Availability Sets: protection against hardware failures
 - Standard Load Balancer: high performance and reliability
 - SQL VM Resource Provider: automated patching and backups
 
-### Operational Features {#operational-features}
+### Operational Features 
 
 - Automated deployment: single script execution
 - Idempotent operations: safe to re-run
@@ -174,7 +174,7 @@ The script will:
 
 ---
 
-## 📖 Deployment Guide {#deployment-guide}
+## Deployment Guide
 
 ### 1. Pre-Deployment Checklist
 
@@ -229,9 +229,9 @@ az keyvault secret show --vault-name <YOUR-KEYVAULT> --name sql-admin-password -
 
 ---
 
-## 🔧 Post-Deployment Configuration {#post-deployment-configuration}
+## Post-Deployment Configuration 
 
-### Phase 1: Initial VM Access {#phase-1-initial-vm-access}
+### Phase 1: Initial VM Access 
 
 1. **Connect to VMs**
 
@@ -256,7 +256,7 @@ New-NetFirewallRule -DisplayName "AG Endpoint" -Direction Inbound -Protocol TCP 
 New-NetFirewallRule -DisplayName "SQL Probe Port" -Direction Inbound -Protocol TCP -LocalPort 59999 -Action Allow
 ```
 
-### Phase 2: Windows Failover Cluster {#phase-2-windows-failover-cluster}
+### Phase 2: Windows Failover Cluster
 
 1. **Install Clustering Feature (both VMs)**
 
@@ -275,7 +275,7 @@ New-Cluster -Name SQLCLUSTER -Node sqlvm1,sqlvm2 -NoStorage
 (Get-Cluster).SameSubnetThreshold = 15
 ```
 
-### Phase 3: SQL Server Always On {#phase-3-sql-server-always-on}
+### Phase 3: SQL Server Always On 
 
 1. **Enable Always On (both VMs)**
 
@@ -319,7 +319,7 @@ REPLICA ON
         FAILOVER_MODE = AUTOMATIC);
 ```
 
-### Phase 4: Configure AG Listener {#phase-4-configure-ag-listener}
+### Phase 4: Configure AG Listener 
 
 1. **Create Listener (primary)**
 
@@ -351,7 +351,7 @@ Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{
 
 ---
 
-## 🔒 Security {#security}
+## Security 
 
 ### Security Best Practices Implemented {#security-best-practices-implemented}
 
@@ -363,7 +363,7 @@ Get-ClusterResource $IPResourceName | Set-ClusterParameter -Multiple @{
 | Access Control        | RBAC + Key Vault policies | Principle of least privilege     |
 | Encryption            | TLS for AG endpoints      | Data in transit protection       |
 
-### Post-Deployment Security Hardening {#post-deployment-security-hardening}
+### Post-Deployment Security Hardening 
 
 1. **Remove Public IPs**
 
@@ -387,7 +387,7 @@ az network bastion create   --name sql-bastion   --public-ip-address sql-bastion
 
 ---
 
-## 💰 Cost Analysis {#cost-analysis}
+## Cost Analysis 
 
 ### Estimated Monthly Costs (Central US Region) {#estimated-monthly-costs}
 
@@ -400,7 +400,7 @@ az network bastion create   --name sql-bastion   --public-ip-address sql-bastion
 | Network        | Bandwidth (est. 100 GB/month)                    | $9                 |
 | **Total**      |                                                  | **~$455/month**    |
 
-### Cost Optimization Strategies {#cost-optimization-strategies}
+### Cost Optimization Strategies
 
 **Development/Test Environments**
 
@@ -422,9 +422,9 @@ az network bastion create   --name sql-bastion   --public-ip-address sql-bastion
 
 ---
 
-## 🔍 Troubleshooting {#troubleshooting}
+## Troubleshooting 
 
-### Common Issues and Solutions {#common-issues-and-solutions}
+### Common Issues and Solutions 
 
 **1. Cluster Creation Fails**
 
@@ -486,7 +486,7 @@ EXEC sp_helpserver;
 
 ---
 
-## 📚 Best Practices {#best-practices}
+## Best Practices 
 
 **Pre-Deployment**
 
@@ -511,7 +511,7 @@ EXEC sp_helpserver;
 
 ---
 
-## ❓ FAQ {#faq}
+## FAQ
 
 **General Questions**
 
@@ -548,7 +548,7 @@ EXEC sp_helpserver;
 
 ---
 
-## 🤝 Contributing {#contributing}
+## Contributing 
 
 We welcome contributions! Please see the CONTRIBUTING.md for details.
 
@@ -571,15 +571,9 @@ We welcome contributions! Please see the CONTRIBUTING.md for details.
 
 ---
 
-## 📄 License {#license}
+## License
 
 This project is licensed under the MIT License – see the LICENSE file for details.
-
----
-
-## 🗒️ Changelog {#changelog}
-
-See CHANGELOG.md for version history and notable changes.
 
 ---
 
