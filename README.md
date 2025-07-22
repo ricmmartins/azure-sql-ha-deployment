@@ -110,4 +110,14 @@ The script will:
 
 ![SQL HA Architecture](images/ha-design.png)
 
+## ✨ Features
+
+### 🔐 Security Features
+
+- Azure Key Vault Integration: All credentials stored securely
+- Managed Identities: No passwords in code or config files
+- Network Isolation: Custom VNet with strict NSG rules
+- Temporary Public IPs: Only for initial configuration, easily removed
+- Role-Based Access: VMs have minimal required permissions
+
 
